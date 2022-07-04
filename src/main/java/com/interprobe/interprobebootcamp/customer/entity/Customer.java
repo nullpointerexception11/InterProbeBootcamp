@@ -52,4 +52,8 @@ public class Customer {
     @Column(name = "CANCEL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date cancelDate;
+
+
+
+
 }
