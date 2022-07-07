@@ -1,6 +1,7 @@
 package com.interprobe.interprobebootcamp.customer.entity;
 
 import com.interprobe.interprobebootcamp.customer.enums.EnumStatus;
+import com.interprobe.interprobebootcamp.generic.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +17,7 @@ import java.util.Date;
 @Table(name = "CUSTOMER")
 @Getter
 @Setter
-public class Customer {
+public class Customer extends BaseEntity {
     @Id
     @GeneratedValue(generator = "Customer")
     @SequenceGenerator(name = "Customer", sequenceName = "CUSTOMER_ID_SEQ")
@@ -49,6 +50,8 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private EnumStatus status;
 
-
+    @Column(name = "CANCEL_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cancelDate;
 
 }
