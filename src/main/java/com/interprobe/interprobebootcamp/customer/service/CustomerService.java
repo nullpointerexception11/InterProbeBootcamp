@@ -5,12 +5,17 @@ import com.interprobe.interprobebootcamp.customer.dto.CustomerResponseDTO;
 import com.interprobe.interprobebootcamp.customer.dto.CustomerSaveRequestDTO;
 import com.interprobe.interprobebootcamp.customer.dto.CustomerUpdateRequestDTO;
 import com.interprobe.interprobebootcamp.customer.entity.Customer;
+import com.interprobe.interprobebootcamp.customer.enums.CustomerErrorMessage;
 import com.interprobe.interprobebootcamp.customer.enums.EnumStatus;
 import com.interprobe.interprobebootcamp.customer.mapper.CustomerMapper;
 import com.interprobe.interprobebootcamp.customer.service.entityservice.CustomerEntityService;
+import com.interprobe.interprobebootcamp.generic.enums.GeneralErrorMessage;
+import com.interprobe.interprobebootcamp.generic.exceptions.BusinessException;
+import com.interprobe.interprobebootcamp.generic.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,37 +34,36 @@ public class CustomerService {
 
         List<Customer> customerList = customerDao.findAll();
 
-        List<CustomerResponseDTO> customerResponseDTOList = CustomerMapper.INSTANCE.convertToCustomerResponseDtoList(customerList);
-
-        return customerResponseDTOList;
+        return CustomerMapper.INSTANCE.convertToCustomerResponseDtoList(customerList);
     }
 
-//    public CustomerResponseDTO findById(Long id){
-//
-//      //  Customer customer = customerDao.findByIdWithControl(id);
-//
-//    }
-//
+    public CustomerResponseDTO findById(Long id){
+
+        Customer customer = customerEntityService.findByIdWithControl(id);
+
+        return CustomerMapper.INSTANCE.convertToCustomerResponse(customer);
+
+    }
+
 
     public CustomerResponseDTO save(CustomerSaveRequestDTO customerSaveRequestDTO){
 
-//        if (customerSaveRequestDto == null){
-//            throw new BusinessException(GeneralErrorMessage.VALUES_CANNOT_BE_NULL);
-//        }
-//
+        if (customerSaveRequestDTO == null){
+            throw new BusinessException(GeneralErrorMessage.VALUES_CANNOT_BE_NULL);
+        }
+
         Customer customer = CustomerMapper.INSTANCE.convertToCustomer(customerSaveRequestDTO);
         customer.setStatus(EnumStatus.ACTIVE);
         customer = customerDao.save(customer);
 
-        CustomerResponseDTO customerResponseDTO = CustomerMapper.INSTANCE.convertToCustomerResponse(customer);
-        return customerResponseDTO;
+        return CustomerMapper.INSTANCE.convertToCustomerResponse(customer);
     }
 
-    public void daelete(Long id){
+    public void delete(Long id){
         customerDao.deleteById(id);
     }
 
-    public void daelete(Customer customer){
+    public void delete(Customer customer){
         customerDao.delete(customer);
     }
 
@@ -68,27 +72,25 @@ public class CustomerService {
     }
 
     public CustomerResponseDTO cancel(long id){
-//        Customer customer = customerEntityService.findByIdWithControl(id);
-//        customer.setStatus(EnumStatus.PASSIVE);
-//        customer.setCancelDate(new Date());
-//
-//        customer = customerEntityService.save(customer);
-//
-//        CustomerResponseDto customerResponseDto = CustomerMapper.INSTANCE.convertToCustomerResponseDto(customer);
-//
-//        return customerResponseDto;
+        Customer customer = customerEntityService.findByIdWithControl(id);
+        customer.setStatus(EnumStatus.PASSIVE);
+        customer.setCancelDate(new Date());
+
+        customer = customerEntityService.save(customer);
+
+        return CustomerMapper.INSTANCE.convertToCustomerResponse(customer);
     }
 
     public CustomerResponseDTO update(CustomerUpdateRequestDTO customerUpdateRequestDTO){
-//        boolean isExist = customerEntityService.isExist(customerUpdateRequestDto.getId());
-//        if (!isExist){
-//            throw new ItemNotFoundException(CustomerErrorMessage.CUSTOMER_DOES_NOT_EXIST);
-//        }
-//
-//        Customer customer = CustomerMapper.INSTANCE.convertToCustomer(customerUpdateRequestDto);
-//
-//        customer = customerEntityService.save(customer);
-//
-//        return CustomerMapper.INSTANCE.convertToCustomerResponseDto(customer);
+        boolean isExist = customerEntityService.isExist(customerUpdateRequestDTO.getId());
+        if (!isExist){
+            throw new ItemNotFoundException(CustomerErrorMessage.CUSTOMER_DOES_NOT_EXIST);
+        }
+
+        Customer customer = CustomerMapper.INSTANCE.convertToCustomer(customerUpdateRequestDTO);
+
+        customer = customerEntityService.save(customer);
+
+        return CustomerMapper.INSTANCE.convertToCustomerResponse(customer);
     }
 }
