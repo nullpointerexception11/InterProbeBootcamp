@@ -41,7 +41,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity sava (@Valid @RequestBody CustomerSaveRequestDTO customerSaveRequestDTO){
+    public ResponseEntity save (@Valid @RequestBody CustomerSaveRequestDTO customerSaveRequestDTO){
         CustomerResponseDTO customerResponseDTO = customerService.save(customerSaveRequestDTO);
         return ResponseEntity.ok(RestResponse.of(customerResponseDTO));
     }
